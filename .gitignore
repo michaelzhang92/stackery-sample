@@ -3,3 +3,6 @@
 .stackery
 
 # dependencies
+
+obj/
+.cache

@@ -103,10 +103,14 @@ Resources:
             - Effect: Allow
               Action: dynamodb:DescribeTable
               Resource: !GetAtt usersTable.Arn
+        - SNSPublishMessagePolicy:
+            TopicName: !GetAtt userUpdated.TopicName
       Environment:
         Variables:
           TABLE_NAME: !Ref usersTable
           TABLE_ARN: !GetAtt usersTable.Arn
+          TOPIC_NAME: !GetAtt userUpdated.TopicName
+          TOPIC_ARN: !Ref userUpdated
       Events:
         apiPUTusers:
           Type: Api
@@ -137,10 +141,14 @@ Resources:
             - Effect: Allow
               Action: dynamodb:DescribeTable
               Resource: !GetAtt usersTable.Arn
+        - SNSPublishMessagePolicy:
+            TopicName: !GetAtt userCreated.TopicName
       Environment:
         Variables:
           TABLE_NAME: !Ref usersTable
           TABLE_ARN: !GetAtt usersTable.Arn
+          TOPIC_NAME: !GetAtt userCreated.TopicName
+          TOPIC_ARN: !Ref userCreated
       Events:
         apiPOSTusers:
           Type: Api
@@ -171,10 +179,14 @@ Resources:
             - Effect: Allow
               Action: dynamodb:DescribeTable
               Resource: !GetAtt usersTable.Arn
+        - SNSPublishMessagePolicy:
+            TopicName: !GetAtt userDeleted.TopicName
       Environment:
         Variables:
           TABLE_NAME: !Ref usersTable
           TABLE_ARN: !GetAtt usersTable.Arn
+          TOPIC_NAME: !GetAtt userDeleted.TopicName
+          TOPIC_ARN: !Ref userDeleted
       Events:
         apiDELETEusers:
           Type: Api
@@ -235,6 +247,18 @@ Resources:
       TableName: !Sub ${AWS::StackName}-usersTable
     Metadata:
       StackeryName: Users
+  userCreated:
+    Type: AWS::SNS::Topic
+    Properties:
+      TopicName: !Sub ${AWS::StackName}-userCreated
+  userUpdated:
+    Type: AWS::SNS::Topic
+    Properties:
+      TopicName: !Sub ${AWS::StackName}-userUpdated
+  userDeleted:
+    Type: AWS::SNS::Topic
+    Properties:
+      TopicName: !Sub ${AWS::StackName}-userDeleted
 Parameters:
   StackeryStackTagName:
     Type: String
